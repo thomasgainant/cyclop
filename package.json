@@ -1,0 +1,26 @@
+{
+  "name": "cyclop",
+  "version": "1.0.0",
+  "description": "High speed database solution",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomasgainant/cyclop.git"
+  },
+  "keywords": [
+    "database",
+    "DBMS",
+    "high",
+    "speed"
+  ],
+  "author": "Thomas Gainant",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thomasgainant/cyclop/issues"
+  },
+  "homepage": "https://github.com/thomasgainant/cyclop#readme",
+  "dependencies": {}
+}
