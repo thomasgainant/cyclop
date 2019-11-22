@@ -1,33 +1,60 @@
 const http = require('http');
+const fs = require('fs');
+
 const Pawn = require('./pawn');
 
 let first = null;
 let last = null;
 let id = 0;
 
-//Querying
+//Loading
+fs.readdir('data', function(err, files){
+    if (err) throw err;
 
-http.createServer(function (req, res) {
-    let body = [];
-    req.on('data', (chunk) => {
-        body.push(chunk);
-    }).on('end', () => {
-        body = Buffer.concat(body).toString();
+    let iteration = 0;
+    for(let filename of files){
+        fs.readFile('data/'+filename, (errFile, data) => {
+            if (errFile) throw errFile;
 
-        res.writeHead(200, {'Content-Type': 'application/json'});
-            let response = handleQuery(JSON.parse(body));
-        res.write(JSON.stringify(response));
-        res.end();
-    });
-}).listen(8080);
+            let JSONdata = JSON.parse(data);
+            add(JSONdata);
+
+            iteration++;
+            if(iteration >= files.length){
+                //Querying
+                http.createServer(function (req, res) {
+                    let body = [];
+                    req.on('data', (chunk) => {
+                        body.push(chunk);
+                    }).on('end', () => {
+                        body = Buffer.concat(body).toString();
+
+                        res.writeHead(200, {'Content-Type': 'application/json'});
+                            let response = handleQuery(JSON.parse(body));
+                        res.write(JSON.stringify(response));
+                        res.end();
+                    });
+                }).listen(3987);
+            }
+        });
+    }
+});
 
 function handleQuery(body){
-    if(first != null){
-        return set(first, body);
+    let result = null;
+
+    if(body._id != null){
+        result = set(first, body);
     }
     else{
-        return add(body);
+        result = add(body);
     }
+
+    if(first != null){
+        first.save();
+    }
+
+    return result;
 }
 
 function set(current, body){
@@ -59,5 +86,3 @@ function add(body){
     last = newPawn;
     return newPawn.get();
 }
-
-//Saving
